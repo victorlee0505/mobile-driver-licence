@@ -3,6 +3,7 @@ package com.example.mobile.driverlicense.mDoc;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.example.mobile.driverlicense.driver.DriverDetails;
@@ -11,6 +12,7 @@ import com.example.mobile.driverlicense.mDoc.namespace.AccessControlProfile;
 import com.example.mobile.driverlicense.mDoc.namespace.AccessControlProfileId;
 import com.example.mobile.driverlicense.mDoc.namespace.EntryData;
 import com.example.mobile.driverlicense.mDoc.namespace.NamespaceData;
+import com.example.mobile.driverlicense.mDoc.utils.CborDecoderUtils;
 import com.example.mobile.driverlicense.mDoc.utils.CborEncoderUtils;
 import com.example.mobile.driverlicense.mDoc.utils.StringParser;
 import com.example.mobile.driverlicense.mDoc.validator.DriverDetailsValidator;
@@ -106,6 +108,13 @@ public class MobileDataBuilder {
             @NonNull String value) {
         return putEntry(namespace, name, accessControlProfileIds,
                 CborEncoderUtils.cborEncodeString(value));
+    }
+
+    public MobileDataElement putEntryString(@NonNull String namespace, @NonNull String name,
+            @NonNull Collection<AccessControlProfileId> accessControlProfileIds, String accessControl,
+            @NonNull String value) {
+        return putEntry(namespace, name, accessControlProfileIds,
+                CborEncoderUtils.cborEncodeString(accessControl, value));
     }
 
     /**
@@ -263,7 +272,9 @@ public class MobileDataBuilder {
         Optional<DriverDetails> details = Optional.ofNullable(this.driverDetails);
 
         //* 7.2.1 Table 5 Mandatory
-        details.map(DriverDetails::getFamilyName).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.FAMILY_NAME, idsNoAuth, value));
+        // details.map(DriverDetails::getFamilyName).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.FAMILY_NAME, idsNoAuth, value));
+        details.map(DriverDetails::getFamilyName).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.FAMILY_NAME, idsProtectedAuth, MobileDocConstants.PROTECTED, value));
+
         details.map(DriverDetails::getGivenName).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.GIVEN_NAME, idsNoAuth, value));
         details.map(DriverDetails::getBirthDate).ifPresent(value -> putEntryLocalDateTime(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.BIRTH_DATE, idsNoAuth, StringParser.parseToLocalDateTime(value)));
         details.map(DriverDetails::getIssueDate).ifPresent(value -> putEntryLocalDateTime(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUE_DATE, idsNoAuth, StringParser.parseToLocalDateTime(value)));
@@ -301,5 +312,20 @@ public class MobileDataBuilder {
         details.map(DriverDetails::getSignatureUsualMark).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.SIGNATURE_USUAL_MARK, idsNoAuth, value));
         //! double check data type and format ref 7.2.1 table 5 
         return this.mData;
+    }
+
+    public static void main(String[] args) {
+
+        DriverDetails driverDetails = DriverDetails.builder().familyName("John").build();
+        MobileDataBuilder builder = new MobileDataBuilder(driverDetails);
+
+        MobileDataElement mData = builder.mapper();
+
+        for( Entry<String, NamespaceData> data : mData.getMNamespaces().entrySet()) {
+            for( Entry<String, EntryData> d : data.getValue().getmEntries().entrySet()) {
+                System.out.println(CborDecoderUtils.cborDecodeAll(d.getValue().getMValue()));
+            }
+        }
+
     }
 }
