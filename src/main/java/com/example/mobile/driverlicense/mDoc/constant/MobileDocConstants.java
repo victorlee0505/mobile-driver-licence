@@ -5,6 +5,12 @@ public class MobileDocConstants {
     public static final String MDL_NAMESPACE = "org.iso.18013.5.1";
     public static final String AAMVA_NAMESPACE = "org.iso.18013.5.1.aamva";
 
+    // mDoc Data element access control
+    public static final String PUBLIC = "public";
+    public static final String PROTECTED = "protected";
+    public static final String PRIVATE = "private";
+    public static final String CONFIDENTIAL = "confidential";
+
     // namespace “org.iso.18013.5.1”
     public static final String FAMILY_NAME = "family_name";
     public static final String GIVEN_NAME = "given_name";
