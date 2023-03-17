@@ -1,4 +1,4 @@
-package com.example.mobile.driverlicense.mDoc;
+package com.example.mobile.driverlicense.mDoc.namespace;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,5 +38,9 @@ public class NamespaceData {
         }
         return null;
     }
-    
+
+    public LinkedHashMap<String, EntryData> getmEntries() {
+        return mEntries;
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.example.mobile.driverlicense.mDoc;
+package com.example.mobile.driverlicense.mDoc.namespace;
 
 import java.security.cert.X509Certificate;
 

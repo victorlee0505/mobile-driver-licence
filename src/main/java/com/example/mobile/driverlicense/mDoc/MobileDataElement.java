@@ -3,6 +3,9 @@ package com.example.mobile.driverlicense.mDoc;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import com.example.mobile.driverlicense.mDoc.namespace.AccessControlProfile;
+import com.example.mobile.driverlicense.mDoc.namespace.NamespaceData;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

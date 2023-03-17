@@ -7,6 +7,10 @@ import java.util.Optional;
 
 import com.example.mobile.driverlicense.driver.DriverDetails;
 import com.example.mobile.driverlicense.mDoc.constant.MobileDocConstants;
+import com.example.mobile.driverlicense.mDoc.namespace.AccessControlProfile;
+import com.example.mobile.driverlicense.mDoc.namespace.AccessControlProfileId;
+import com.example.mobile.driverlicense.mDoc.namespace.EntryData;
+import com.example.mobile.driverlicense.mDoc.namespace.NamespaceData;
 import com.example.mobile.driverlicense.mDoc.utils.CborEncoderUtils;
 import com.example.mobile.driverlicense.mDoc.utils.StringParser;
 import com.example.mobile.driverlicense.mDoc.validator.DriverDetailsValidator;
@@ -76,7 +80,7 @@ public class MobileDataBuilder {
             this.mData.getMNamespaces().put(namespace, namespaceData);
         }
         // TODO: validate/verify that value is proper CBOR.
-        namespaceData.mEntries.put(name, new EntryData(value, accessControlProfileIds));
+        namespaceData.getmEntries().put(name, new EntryData(value, accessControlProfileIds));
         return this.mData;
     }
 

@@ -1,4 +1,4 @@
-package com.example.mobile.driverlicense.mDoc;
+package com.example.mobile.driverlicense.mDoc.namespace;
 
 /**
  * access control profile id (corresponding to {@link AccessControlProfile}) can be use on each data element
