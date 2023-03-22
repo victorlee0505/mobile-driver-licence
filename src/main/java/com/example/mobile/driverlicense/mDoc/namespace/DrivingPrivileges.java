@@ -13,5 +13,5 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DrivingPrivileges {
-    private List<DrivingPrivilege> mEntries = new ArrayList<DrivingPrivilege>();
+    private List<DrivingPrivilege> drivingPrivileges = new ArrayList<DrivingPrivilege>();
 }

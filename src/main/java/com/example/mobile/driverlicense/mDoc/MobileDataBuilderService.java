@@ -6,6 +6,9 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.mobile.driverlicense.driver.DriverDetails;
 import com.example.mobile.driverlicense.mDoc.constant.MobileDocConstants;
 import com.example.mobile.driverlicense.mDoc.namespace.AccessControlProfile;
@@ -21,32 +24,32 @@ import com.example.mobile.driverlicense.mDoc.validator.DriverDetailsValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class MobileDataBuilder {
+@Service
+public class MobileDataBuilderService {
 
-    private MobileDataElement mData;
-    private DriverDetails driverDetails;
+    @Autowired
+    private ObjectMapper jacksonMapper;
 
-    /**
-     * Generate a brand new MobileDataElement
-     */
-    public MobileDataBuilder(DriverDetails driverDetails) {
-        this.mData = new MobileDataElement();
-        this.driverDetails = driverDetails;
-    }
+    // private MobileDataElement mData;
+    // private DriverDetails driverDetails;
 
-    /**
-     * re-use existing MobileDataElement
-     */
-    public MobileDataBuilder(MobileDataElement mData, DriverDetails driverDetails) {
-        this.mData = mData;
-        this.driverDetails = driverDetails;
-    }
+    // /**
+    //  * Generate a brand new MobileDataElement
+    //  */
+    // public MobileDataBuilder(DriverDetails driverDetails) {
+    //     this.mData = new MobileDataElement();
+    //     this.driverDetails = driverDetails;
+    // }
+
+    // /**
+    //  * re-use existing MobileDataElement
+    //  */
+    // public MobileDataBuilder(MobileDataElement mData, DriverDetails driverDetails) {
+    //     this.mData = mData;
+    //     this.driverDetails = driverDetails;
+    // }
 
     /**
      * generate a new MobileDataElement from DriverDetails
@@ -77,17 +80,17 @@ public class MobileDataBuilder {
      * @param value                   The value to add, in CBOR encoding.
      * @return The builder.
      */
-    public MobileDataElement putEntry(@NonNull String namespace, @NonNull String name,
+    public MobileDataElement putEntry(@NonNull MobileDataElement mData, @NonNull String namespace, @NonNull String name,
             @NonNull Collection<AccessControlProfileId> accessControlProfileIds,
             @NonNull byte[] value) {
-        NamespaceData namespaceData = this.mData.getMNamespaces().get(namespace);
+        NamespaceData namespaceData = mData.getMNamespaces().get(namespace);
         if (namespaceData == null) {
             namespaceData = new NamespaceData(namespace);
-            this.mData.getMNamespaces().put(namespace, namespaceData);
+            mData.getMNamespaces().put(namespace, namespaceData);
         }
         // TODO: validate/verify that value is proper CBOR.
         namespaceData.getmEntries().put(name, new EntryData(value, accessControlProfileIds));
-        return this.mData;
+        return mData;
     }
 
     /**
@@ -107,19 +110,19 @@ public class MobileDataBuilder {
      * @param value                   The value to add.
      * @return The builder.
      */
-    public MobileDataElement putEntryString(@NonNull String namespace, @NonNull String name,
+    public MobileDataElement putEntryString(@NonNull MobileDataElement mData, @NonNull String namespace, @NonNull String name,
             @NonNull Collection<AccessControlProfileId> accessControlProfileIds,
             @NonNull String value) {
-        return putEntry(namespace, name, accessControlProfileIds,
+        return putEntry(mData, namespace, name, accessControlProfileIds,
                 CborEncoderUtils.cborEncodeString(value));
     }
 
-    public MobileDataElement putEntryString(@NonNull String namespace, @NonNull String name,
-            @NonNull Collection<AccessControlProfileId> accessControlProfileIds, String accessControl,
-            @NonNull String value) {
-        return putEntry(namespace, name, accessControlProfileIds,
-                CborEncoderUtils.cborEncodeString(accessControl, value));
-    }
+    // public MobileDataElement putEntryString(@NonNull String namespace, @NonNull String name,
+    //         @NonNull Collection<AccessControlProfileId> accessControlProfileIds, String accessControl,
+    //         @NonNull String value) {
+    //     return putEntry(namespace, name, accessControlProfileIds,
+    //             CborEncoderUtils.cborEncodeString(accessControl, value));
+    // }
 
     /**
      * Adds a new entry to the builder.
@@ -138,10 +141,10 @@ public class MobileDataBuilder {
      * @param value                   The value to add.
      * @return The builder.
      */
-    public MobileDataElement putEntryBytestring(@NonNull String namespace, @NonNull String name,
+    public MobileDataElement putEntryBytestring(@NonNull MobileDataElement mData, @NonNull String namespace, @NonNull String name,
             @NonNull Collection<AccessControlProfileId> accessControlProfileIds,
             @NonNull byte[] value) {
-        return putEntry(namespace, name, accessControlProfileIds,
+        return putEntry(mData, namespace, name, accessControlProfileIds,
                 CborEncoderUtils.cborEncodeBytestring(value));
     }
 
@@ -164,10 +167,10 @@ public class MobileDataBuilder {
      * @param value                   The value to add.
      * @return The builder.
      */
-    public MobileDataElement putEntryInteger(@NonNull String namespace, @NonNull String name,
+    public MobileDataElement putEntryInteger(@NonNull MobileDataElement mData, @NonNull String namespace, @NonNull String name,
             @NonNull Collection<AccessControlProfileId> accessControlProfileIds,
             long value) {
-        return putEntry(namespace, name, accessControlProfileIds,
+        return putEntry(mData, namespace, name, accessControlProfileIds,
                 CborEncoderUtils.cborEncodeNumber(value));
     }
 
@@ -190,10 +193,10 @@ public class MobileDataBuilder {
      * @param value                   The value to add.
      * @return The builder.
      */
-    public MobileDataElement putEntryBoolean(@NonNull String namespace, @NonNull String name,
+    public MobileDataElement putEntryBoolean(@NonNull MobileDataElement mData, @NonNull String namespace, @NonNull String name,
             @NonNull Collection<AccessControlProfileId> accessControlProfileIds,
             boolean value) {
-        return putEntry(namespace, name, accessControlProfileIds,
+        return putEntry(mData, namespace, name, accessControlProfileIds,
                 CborEncoderUtils.cborEncodeBoolean(value));
     }
 
@@ -220,10 +223,10 @@ public class MobileDataBuilder {
      * @param value                   The value to add.
      * @return The builder.
      */
-    public MobileDataElement putEntryLocalDateTime(@NonNull String namespace, @NonNull String name,
+    public MobileDataElement putEntryLocalDateTime(@NonNull MobileDataElement mData, @NonNull String namespace, @NonNull String name,
             @NonNull Collection<AccessControlProfileId> accessControlProfileIds,
             @NonNull LocalDateTime value) {
-        return putEntry(namespace, name, accessControlProfileIds,
+        return putEntry(mData, namespace, name, accessControlProfileIds,
                 CborEncoderUtils.cborEncodeDateTime(value));
     }
 
@@ -233,9 +236,9 @@ public class MobileDataBuilder {
      * @param profile The access control profile.
      * @return The builder.
      */
-    public MobileDataElement addAccessControlProfile(@NonNull AccessControlProfile profile) {
-        this.mData.getMProfiles().add(profile);
-        return this.mData;
+    private MobileDataElement addAccessControlProfile(@NonNull MobileDataElement mData, @NonNull AccessControlProfile profile) {
+        mData.getMProfiles().add(profile);
+        return mData;
     }
 
     //! FIXME no cert
@@ -272,14 +275,14 @@ public class MobileDataBuilder {
         return drivingPrivileges;
     }
 
-    private MobileDataElement mapper() {
-        if(!DriverDetailsValidator.isDriverDetailsValid(this.driverDetails)){
+    public MobileDataElement mapper(@NonNull MobileDataElement mData, @NonNull DriverDetails driverDetails) {
+        if(!DriverDetailsValidator.isDriverDetailsValid(driverDetails)){
             // need to throw
             return null;
         }
 
-        addAccessControlProfile(createNoAuthProfile());
-        addAccessControlProfile(protectedAuthProfile());
+        addAccessControlProfile(mData, createNoAuthProfile());
+        addAccessControlProfile(mData, protectedAuthProfile());
 
         AccessControlProfileId idNoAuth = new AccessControlProfileId(0);
         AccessControlProfileId idProtectedAuth = new AccessControlProfileId(1);
@@ -291,74 +294,73 @@ public class MobileDataBuilder {
         Collection<AccessControlProfileId> idsProtectedAuth = new ArrayList<AccessControlProfileId>();
         idsProtectedAuth.add(idProtectedAuth);
 
-        Optional<DriverDetails> details = Optional.ofNullable(this.driverDetails);
+        Optional<DriverDetails> details = Optional.ofNullable(driverDetails);
 
         //* 7.2.1 Table 5 Mandatory
-        // details.map(DriverDetails::getFamilyName).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.FAMILY_NAME, idsNoAuth, value));
-        details.map(DriverDetails::getFamilyName).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.FAMILY_NAME, idsProtectedAuth, MobileDocConstants.PROTECTED, value));
+        details.map(DriverDetails::getFamilyName).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.FAMILY_NAME, idsNoAuth, value));
+        // details.map(DriverDetails::getFamilyName).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.FAMILY_NAME, idsProtectedAuth, MobileDocConstants.PROTECTED, value));
 
-        details.map(DriverDetails::getGivenName).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.GIVEN_NAME, idsNoAuth, value));
-        details.map(DriverDetails::getBirthDate).ifPresent(value -> putEntryLocalDateTime(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.BIRTH_DATE, idsNoAuth, StringParser.parseToLocalDateTime(value)));
-        details.map(DriverDetails::getIssueDate).ifPresent(value -> putEntryLocalDateTime(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUE_DATE, idsNoAuth, StringParser.parseToLocalDateTime(value)));
-        details.map(DriverDetails::getExpiryDate).ifPresent(value -> putEntryLocalDateTime(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.EXPIRY_DATE, idsNoAuth, StringParser.parseToLocalDateTime(value)));
-        details.map(DriverDetails::getIssuingCountry).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUING_COUNTRY, idsNoAuth, value));
-        details.map(DriverDetails::getIssuingAuthority).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUING_AUTHORITY, idsNoAuth, value));
-        details.map(DriverDetails::getDocumentNumber).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.DOCUMENT_NUMBER, idsNoAuth, value));
-        details.map(DriverDetails::getPortrait).ifPresent(value -> putEntry(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.PORTRAIT, idsNoAuth, value.getBytes()));
+        details.map(DriverDetails::getGivenName).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.GIVEN_NAME, idsNoAuth, value));
+        details.map(DriverDetails::getBirthDate).ifPresent(value -> putEntryLocalDateTime(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.BIRTH_DATE, idsNoAuth, StringParser.parseToLocalDateTime(value)));
+        details.map(DriverDetails::getIssueDate).ifPresent(value -> putEntryLocalDateTime(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUE_DATE, idsNoAuth, StringParser.parseToLocalDateTime(value)));
+        details.map(DriverDetails::getExpiryDate).ifPresent(value -> putEntryLocalDateTime(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.EXPIRY_DATE, idsNoAuth, StringParser.parseToLocalDateTime(value)));
+        details.map(DriverDetails::getIssuingCountry).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUING_COUNTRY, idsNoAuth, value));
+        details.map(DriverDetails::getIssuingAuthority).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUING_AUTHORITY, idsNoAuth, value));
+        details.map(DriverDetails::getDocumentNumber).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.DOCUMENT_NUMBER, idsNoAuth, value));
+        details.map(DriverDetails::getPortrait).ifPresent(value -> putEntry(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.PORTRAIT, idsNoAuth, value.getBytes()));
         //! FIXME see 7.2.4
         details.map(DriverDetails::getDrivingPrivileges).ifPresent(value -> {
             DrivingPrivileges dps = buildDrivingPrivileges(details.get());
             String stringValue;
             try {
-                ObjectMapper jacksonMapper = new ObjectMapper();
                 stringValue = jacksonMapper.writeValueAsString(dps.getDrivingPrivileges());
-                putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.DRIVING_PRIVILEGES, idsNoAuth, stringValue);
+                putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.DRIVING_PRIVILEGES, idsNoAuth, stringValue);
             } catch (JsonProcessingException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
-        details.map(DriverDetails::getUnDistinguishingSign).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.UN_DISTINGUISHING_SIGN, idsNoAuth, value));
+        details.map(DriverDetails::getUnDistinguishingSign).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.UN_DISTINGUISHING_SIGN, idsNoAuth, value));
         
         //* 7.2.1 Table 5 Optional
-        details.map(DriverDetails::getAdministrativeNumber).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ADMINISTRATIVE_NUMBER, idsNoAuth, value));
-        details.map(DriverDetails::getSex).ifPresent(value -> putEntryInteger(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.SEX, idsNoAuth, value));
-        details.map(DriverDetails::getHeight).ifPresent(value -> putEntryInteger(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.HEIGHT, idsNoAuth, value));
-        details.map(DriverDetails::getWeight).ifPresent(value -> putEntryInteger(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.WEIGHT, idsNoAuth, value));
-        details.map(DriverDetails::getEyeColour).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.EYE_COLOUR, idsNoAuth, value));
-        details.map(DriverDetails::getHairColour).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.HAIR_COLOUR, idsNoAuth, value));
-        details.map(DriverDetails::getBirthPlace).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.BIRTH_PLACE, idsNoAuth, value));
-        details.map(DriverDetails::getResidentAddress).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_ADDRESS, idsNoAuth, value));
-        details.map(DriverDetails::getPortraitCaptureDate).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.PORTRAIT_CAPTURE_DATE, idsNoAuth, value));
-        details.map(DriverDetails::getAgeInYears).ifPresent(value -> putEntryInteger(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_IN_YEARS, idsNoAuth, value));
-        details.map(DriverDetails::getAgeBirthYear).ifPresent(value -> putEntryInteger(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_BIRTH_YEAR, idsNoAuth, value));
-        details.map(DriverDetails::isAgeOverNn).ifPresent(value -> putEntryBoolean(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_OVER_NN, idsNoAuth, value));
-        details.map(DriverDetails::getIssuingJurisdiction).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUING_JURISDICTION, idsNoAuth, value));
-        details.map(DriverDetails::getNationality).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.NATIONALITY, idsNoAuth, value));
-        details.map(DriverDetails::getResidentCity).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_CITY, idsNoAuth, value));
-        details.map(DriverDetails::getResidentState).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_STATE, idsNoAuth, value));
-        details.map(DriverDetails::getResidnentPostalCode).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDNENT_POSTAL_CODE, idsNoAuth, value));
-        details.map(DriverDetails::getResidentCountry).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_COUNTRY, idsNoAuth, value));
-        details.map(DriverDetails::getBiometricTemplateXx).ifPresent(value -> putEntry(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.BIOMETRIC_TEMPLATE_XX, idsNoAuth, value.getBytes()));
-        details.map(DriverDetails::getFamilyNameNationalCharacter).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.FAMILY_NAME_NATIONAL_CHARACTER, idsNoAuth, value));
-        details.map(DriverDetails::getGivenNameNationalCharacter).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.GIVEN_NAME_NATIONAL_CHARACTER, idsNoAuth, value));
-        details.map(DriverDetails::getSignatureUsualMark).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.SIGNATURE_USUAL_MARK, idsNoAuth, value));
+        details.map(DriverDetails::getAdministrativeNumber).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ADMINISTRATIVE_NUMBER, idsNoAuth, value));
+        details.map(DriverDetails::getSex).ifPresent(value -> putEntryInteger(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.SEX, idsNoAuth, value));
+        details.map(DriverDetails::getHeight).ifPresent(value -> putEntryInteger(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.HEIGHT, idsNoAuth, value));
+        details.map(DriverDetails::getWeight).ifPresent(value -> putEntryInteger(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.WEIGHT, idsNoAuth, value));
+        details.map(DriverDetails::getEyeColour).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.EYE_COLOUR, idsNoAuth, value));
+        details.map(DriverDetails::getHairColour).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.HAIR_COLOUR, idsNoAuth, value));
+        details.map(DriverDetails::getBirthPlace).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.BIRTH_PLACE, idsNoAuth, value));
+        details.map(DriverDetails::getResidentAddress).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_ADDRESS, idsNoAuth, value));
+        details.map(DriverDetails::getPortraitCaptureDate).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.PORTRAIT_CAPTURE_DATE, idsNoAuth, value));
+        details.map(DriverDetails::getAgeInYears).ifPresent(value -> putEntryInteger(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_IN_YEARS, idsNoAuth, value));
+        details.map(DriverDetails::getAgeBirthYear).ifPresent(value -> putEntryInteger(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_BIRTH_YEAR, idsNoAuth, value));
+        details.map(DriverDetails::isAgeOverNn).ifPresent(value -> putEntryBoolean(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_OVER_NN, idsNoAuth, value));
+        details.map(DriverDetails::getIssuingJurisdiction).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUING_JURISDICTION, idsNoAuth, value));
+        details.map(DriverDetails::getNationality).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.NATIONALITY, idsNoAuth, value));
+        details.map(DriverDetails::getResidentCity).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_CITY, idsNoAuth, value));
+        details.map(DriverDetails::getResidentState).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_STATE, idsNoAuth, value));
+        details.map(DriverDetails::getResidnentPostalCode).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDNENT_POSTAL_CODE, idsNoAuth, value));
+        details.map(DriverDetails::getResidentCountry).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_COUNTRY, idsNoAuth, value));
+        details.map(DriverDetails::getBiometricTemplateXx).ifPresent(value -> putEntry(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.BIOMETRIC_TEMPLATE_XX, idsNoAuth, value.getBytes()));
+        details.map(DriverDetails::getFamilyNameNationalCharacter).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.FAMILY_NAME_NATIONAL_CHARACTER, idsNoAuth, value));
+        details.map(DriverDetails::getGivenNameNationalCharacter).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.GIVEN_NAME_NATIONAL_CHARACTER, idsNoAuth, value));
+        details.map(DriverDetails::getSignatureUsualMark).ifPresent(value -> putEntryString(mData, MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.SIGNATURE_USUAL_MARK, idsNoAuth, value));
         //! double check data type and format ref 7.2.1 table 5 
-        return this.mData;
+        return mData;
     }
 
-    public static void main(String[] args) {
+    // public static void main(String[] args) {
 
-        DriverDetails driverDetails = DriverDetails.builder().familyName("John").build();
-        MobileDataBuilder builder = new MobileDataBuilder(driverDetails);
+        // DriverDetails driverDetails = DriverDetails.builder().familyName("John").build();
+        // MobileDataBuilder builder = new MobileDataBuilder();
 
-        MobileDataElement mData = builder.mapper();
+        // MobileDataElement mData = builder.mapper();
 
-        for( Entry<String, NamespaceData> data : mData.getMNamespaces().entrySet()) {
-            for( Entry<String, EntryData> d : data.getValue().getmEntries().entrySet()) {
-                System.out.println(CborDecoderUtils.cborDecodeAll(d.getValue().getMValue()));
-            }
-        }
+        // for( Entry<String, NamespaceData> data : mData.getMNamespaces().entrySet()) {
+        //     for( Entry<String, EntryData> d : data.getValue().getmEntries().entrySet()) {
+        //         System.out.println(CborDecoderUtils.cborDecodeAll(d.getValue().getMValue()));
+        //     }
+        // }
 
-    }
+    // }
 }
