@@ -1,5 +1,9 @@
 package com.example.mobile.driverlicense.mDoc.constant;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class MobileDocConstants {
     public static final String MDL_DOCTYPE = "org.iso.18013.5.1.mDL";
     public static final String MDL_NAMESPACE = "org.iso.18013.5.1";
@@ -34,7 +38,7 @@ public class MobileDocConstants {
     public static final String PORTRAIT_CAPTURE_DATE = "portrait_capture_date";
     public static final String AGE_IN_YEARS = "age_in_years";
     public static final String AGE_BIRTH_YEAR = "age_birth_year";
-    public static final String AGE_OVER_NN = "age_over_nn";
+    public static final String AGE_OVER_NN = "age_over_";
     public static final String ISSUING_JURISDICTION = "issuing_jurisdiction";
     public static final String NATIONALITY = "nationality";
     public static final String RESIDENT_CITY = "resident_city";
@@ -45,5 +49,20 @@ public class MobileDocConstants {
     public static final String FAMILY_NAME_NATIONAL_CHARACTER = "family_name_national_character";
     public static final String GIVEN_NAME_NATIONAL_CHARACTER = "given_name_national_character";
     public static final String SIGNATURE_USUAL_MARK = "signature_usual_mark";
+
+    // 7.2.4
+    public static final String VEHICLE_CATEGORY_CODE = "vehicle_category_code";
+    public static final String CODES = "codes";
+    public static final String CODE = "code";
+    public static final String SIGN = "sign";
+    public static final String VALUE = "value";
+
+    // mDL holder’s sex using values as defined in ISO/IEC 5218.
+    public static final List<Long> SEX_ID = Arrays.asList(0, 1, 2, 9)
+            .stream()
+            .mapToLong(i -> (long) i)
+            .boxed()
+            .collect(Collectors.toList());
+
     
 }

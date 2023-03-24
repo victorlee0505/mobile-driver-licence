@@ -1,16 +1,13 @@
 package com.example.mobile.driverlicense.mDoc.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import co.nstant.in.cbor.CborBuilder;
-import co.nstant.in.cbor.CborDecoder;
 import co.nstant.in.cbor.CborEncoder;
 import co.nstant.in.cbor.CborException;
-import co.nstant.in.cbor.model.Array;
 import co.nstant.in.cbor.model.DataItem;
 import co.nstant.in.cbor.model.UnicodeString;
 import lombok.NonNull;
@@ -85,7 +82,7 @@ public class CborEncoderUtils {
     /**
      * Returns full-date = #6.1004(tstr) where tag 1004 is specified in RFC 8943.
      */
-    private static DataItem cborBuildDateTime(@NonNull LocalDateTime localDateTime) {
+    public static DataItem cborBuildDateTime(@NonNull LocalDateTime localDateTime) {
         String dateString = localDateTime.atZone(null).format(DateTimeFormatter.ISO_DATE_TIME);
         DataItem dataItem = new UnicodeString(dateString);
         dataItem.setTag(1004);

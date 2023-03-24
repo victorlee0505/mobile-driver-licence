@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.mobile.driverlicense.mDoc.constant.VehicleCategoryCodes;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DrivingPrivilege {
     @JsonProperty("vehicle_category_code")
-    private String vehicleCatagoryCode;
+    private VehicleCategoryCodes vehicleCatagoryCode;
 
     @JsonProperty("issue_date")
     private LocalDateTime issueDate;

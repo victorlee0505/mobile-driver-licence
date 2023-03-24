@@ -1,5 +1,8 @@
 package com.example.mobile.driverlicense.driver;
 
+import java.util.List;
+
+import com.example.mobile.driverlicense.mDoc.namespace.DrivingPrivilege;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -97,7 +100,7 @@ public class DriverDetails {
      * 7.2.4
      */
     @JsonProperty("driving_privileges")
-    private String drivingPrivileges;
+    private List<DrivingPrivilege> drivingPrivileges;
 
     /**
      * Distinguishing sign of the issuing country
@@ -192,20 +195,20 @@ public class DriverDetails {
     /**
      * The age of the mDL holder
      */
-    @JsonProperty("age_in_years")
-    private long ageInYears;
+    // @JsonProperty("age_in_years")
+    // private long ageInYears;
 
     /**
      * The year when the mDL holder was born
      */
-    @JsonProperty("age_birth_year")
-    private long ageBirthYear;
+    // @JsonProperty("age_birth_year")
+    // private long ageBirthYear;
 
     /**
      * See 7.2.5
      */
-    @JsonProperty("age_over_nn")
-    private boolean ageOverNn;
+    // @JsonProperty("age_over_nn")
+    // private boolean ageOverNn;
 
     /**
      * Country subdivision code of the jurisdiction
@@ -263,6 +266,9 @@ public class DriverDetails {
 
     /**
      * See 7.2.6 byte str
+     * <p>
+     * EXAMPLE The “FACE” template corresponds to “biometric_template_face” and the “SIGNATURE/SIGN”
+     * template corresponds to “biometric_template_signature_sign”.
      */
     @JsonProperty("biometric_template_xx")
     private String biometricTemplateXx;
