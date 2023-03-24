@@ -15,5 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MobileDocProperties {
+    boolean ageInYears;
+    boolean ageBirthYear;
     List<Integer> ageOverNn;
 }
