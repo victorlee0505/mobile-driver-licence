@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CborEncoderUtils {
 
-    private static byte[] cborEncode(@NonNull DataItem dataItem) {
+    public static byte[] cborEncode(@NonNull DataItem dataItem) {
         return cborEncodeWithoutCanonicalizing(dataItem);
     }
 

@@ -330,9 +330,9 @@ public class MobileDataBuilder {
         details.map(DriverDetails::getBirthPlace).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.BIRTH_PLACE, idsNoAuth, value));
         details.map(DriverDetails::getResidentAddress).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_ADDRESS, idsNoAuth, value));
         details.map(DriverDetails::getPortraitCaptureDate).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.PORTRAIT_CAPTURE_DATE, idsNoAuth, value));
-        details.map(DriverDetails::getAgeInYears).ifPresent(value -> putEntryInteger(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_IN_YEARS, idsNoAuth, value));
-        details.map(DriverDetails::getAgeBirthYear).ifPresent(value -> putEntryInteger(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_BIRTH_YEAR, idsNoAuth, value));
-        details.map(DriverDetails::isAgeOverNn).ifPresent(value -> putEntryBoolean(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_OVER_NN, idsNoAuth, value));
+        // details.map(DriverDetails::getAgeInYears).ifPresent(value -> putEntryInteger(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_IN_YEARS, idsNoAuth, value));
+        // details.map(DriverDetails::getAgeBirthYear).ifPresent(value -> putEntryInteger(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_BIRTH_YEAR, idsNoAuth, value));
+        // details.map(DriverDetails::isAgeOverNn).ifPresent(value -> putEntryBoolean(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.AGE_OVER_NN, idsNoAuth, value));
         details.map(DriverDetails::getIssuingJurisdiction).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.ISSUING_JURISDICTION, idsNoAuth, value));
         details.map(DriverDetails::getNationality).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.NATIONALITY, idsNoAuth, value));
         details.map(DriverDetails::getResidentCity).ifPresent(value -> putEntryString(MobileDocConstants.MDL_NAMESPACE, MobileDocConstants.RESIDENT_CITY, idsNoAuth, value));
