@@ -67,7 +67,7 @@ public class MobileDataBuilderService {
      * This is a convenience method which encodes {@code value} as CBOR and adds the
      * resulting bytes using {@link #putEntry(String, String, Collection, byte[])}.
      * The
-     * resulting CBOR will be major type 3 (text string).
+     * resulting CBOR will be pre-configured DataItem regardless of type.
      * </p>
      *
      * @param namespace               The namespace to use, e.g.
