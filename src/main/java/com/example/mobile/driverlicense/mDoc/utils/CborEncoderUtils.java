@@ -1,9 +1,15 @@
 package com.example.mobile.driverlicense.mDoc.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
+import java.security.PublicKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECPoint;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import org.bouncycastle.util.BigIntegers;
 
 import co.nstant.in.cbor.CborBuilder;
 import co.nstant.in.cbor.CborEncoder;
@@ -15,6 +21,36 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CborEncoderUtils {
+
+    private static final long COSE_KEY_KTY = 1;
+    private static final long COSE_KEY_TYPE_EC2 = 2;
+    private static final long COSE_KEY_EC2_CRV = -1;
+    private static final long COSE_KEY_EC2_X = -2;
+    private static final long COSE_KEY_EC2_Y = -3;
+    private static final long COSE_KEY_EC2_CRV_P256 = 1;
+
+    /* Encodes an integer according to Section 2.3.5 Field-Element-to-Octet-String Conversion
+     * of SEC 1: Elliptic Curve Cryptography (https://www.secg.org/sec1-v2.pdf).
+     */
+    public static byte[] sec1EncodeFieldElementAsOctetString(int octetStringSize, BigInteger fieldValue) {
+        return BigIntegers.asUnsignedByteArray(octetStringSize, fieldValue);
+    }
+
+    public static DataItem cborBuildCoseKey(@NonNull PublicKey key) {
+        ECPublicKey ecKey = (ECPublicKey) key;
+        ECPoint w = ecKey.getW();
+        byte[] x = sec1EncodeFieldElementAsOctetString(32, w.getAffineX());
+        byte[] y = sec1EncodeFieldElementAsOctetString(32, w.getAffineY());
+        DataItem item = new CborBuilder()
+                .addMap()
+                .put(COSE_KEY_KTY, COSE_KEY_TYPE_EC2)
+                .put(COSE_KEY_EC2_CRV, COSE_KEY_EC2_CRV_P256)
+                .put(COSE_KEY_EC2_X, x)
+                .put(COSE_KEY_EC2_Y, y)
+                .end()
+                .build().get(0);
+        return item;
+    }
 
     public static byte[] cborEncode(@NonNull DataItem dataItem) {
         return cborEncodeWithoutCanonicalizing(dataItem);

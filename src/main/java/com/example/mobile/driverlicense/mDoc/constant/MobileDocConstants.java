@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MobileDocConstants {
+    public static final String MDL_DOC_VERSION = "1.0";
     public static final String MDL_DOCTYPE = "org.iso.18013.5.1.mDL";
     public static final String MDL_NAMESPACE = "org.iso.18013.5.1";
     public static final String AAMVA_NAMESPACE = "org.iso.18013.5.1.aamva";
