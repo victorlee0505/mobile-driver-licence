@@ -1,23 +1,31 @@
 package com.example.mobile.driverlicense.mDoc;
 
-import co.nstant.in.cbor.CborBuilder;
-import co.nstant.in.cbor.builder.ArrayBuilder;
-import co.nstant.in.cbor.builder.MapBuilder;
-import co.nstant.in.cbor.model.UnicodeString;
-import lombok.NonNull;
-
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.example.mobile.driverlicense.mDoc.constant.CryptographicProtocols;
 import com.example.mobile.driverlicense.mDoc.mso.MobileSecurityObject;
+import com.example.mobile.driverlicense.mDoc.namespace.EntryData;
+import com.example.mobile.driverlicense.mDoc.namespace.NamespaceData;
 import com.example.mobile.driverlicense.mDoc.utils.CborEncoderUtils;
+import com.example.mobile.driverlicense.mDoc.utils.MSODigestIdGenerator;
+
+import co.nstant.in.cbor.CborBuilder;
+import co.nstant.in.cbor.builder.ArrayBuilder;
+import co.nstant.in.cbor.builder.MapBuilder;
+import co.nstant.in.cbor.model.UnicodeString;
+import lombok.NonNull;
 
 /**
  * Helper class for building <code>MobileSecurityObject</code> <a href="http://cbor.io/">CBOR</a>
@@ -90,6 +98,18 @@ public class MobileSecurityObjectGenerator {
         }
         valueDigestsInner.end();
         return this;
+    }
+
+    private Map<Long, byte[]> generateISODigest(String alogrithm, NamespaceData nsData) throws NoSuchAlgorithmException {
+        MessageDigest digester = MessageDigest.getInstance(this.mso.getDigestAlgorithm());
+        Map<Long, byte[]> isoDigestIDs = new HashMap<>();
+
+        LinkedHashMap<String, EntryData> datas = nsData.getmEntries();
+
+        for (Entry<String, EntryData> data : datas.entrySet()) {
+            isoDigestIDs.put(MSODigestIdGenerator.generateDigestId(alogrithm, data.getValue().getMValue()), digester.digest(data.getValue().getMValue()));
+        }
+        return isoDigestIDs;
     }
 
     /**
@@ -272,20 +292,25 @@ public class MobileSecurityObjectGenerator {
      * {@link #setValidityInfo(Timestamp, Timestamp, Timestamp, Timestamp)} before this call.
      *
      * @return the bytes of <code>MobileSecurityObject</code> CBOR.
+     * @throws NoSuchAlgorithmException
      * @exception IllegalStateException if required data hasn't been set using the setter
      * methods on this class.
      */
     @NonNull
-    public byte[] generate() {
+    public byte[] generate() throws NoSuchAlgorithmException {
         if (digestEmpty) {
             throw new IllegalStateException("Must call addDigestIdsForNamespace before generating");
         } else if (mSigned == null) {
             throw new IllegalStateException("Must call setValidityInfo before generating");
         }
 
+        for (Entry<String, NamespaceData> namespaces : this.mso.getMData().getMNamespaces().entrySet()) {
+            addDigestIdsForNamespace(namespaces.getKey(), generateISODigest(this.mso.getDigestAlgorithm(), namespaces.getValue()));
+        }
+
         CborBuilder msoBuilder = new CborBuilder();
         MapBuilder<CborBuilder> msoMapBuilder = msoBuilder.addMap();
-        msoMapBuilder.put("version", "1.0");
+        msoMapBuilder.put("version", this.mso.getVerions());
         msoMapBuilder.put("digestAlgorithm", this.mso.getDigestAlgorithm());
         msoMapBuilder.put("docType", this.mso.getDocType());
         msoMapBuilder.put(new UnicodeString("valueDigests"), mValueDigestsBuilder.build().get(0));
