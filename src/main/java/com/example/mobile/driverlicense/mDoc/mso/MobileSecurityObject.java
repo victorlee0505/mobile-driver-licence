@@ -19,9 +19,8 @@ import lombok.Setter;
 public class MobileSecurityObject {
     private String verions;
     private String digestAlgorithm;
-    private PublicKey deviceKey;
     private MobileDataElement mData;
-    private Map<Long, byte[]> deviceKeyInfo;
+    private DeviceKeyInfo deviceKeyInfo;
     private String docType;
     private ValidityInfo validityInfo;
 
