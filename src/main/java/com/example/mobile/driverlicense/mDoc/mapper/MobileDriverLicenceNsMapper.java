@@ -76,6 +76,8 @@ public class MobileDriverLicenceNsMapper implements NamespaceDataMapperInf<Drive
         });
         
         details.map(DriverDetails::getUnDistinguishingSign).ifPresent(value -> map.put(MobileDocConstants.UN_DISTINGUISHING_SIGN, CborHelper.createDataItem(value)));
+
+        
         
         //* 7.2.1 Table 5 Optional
         details.map(DriverDetails::getAdministrativeNumber).ifPresent(value -> map.put(MobileDocConstants.ADMINISTRATIVE_NUMBER, CborHelper.createDataItem(value)));

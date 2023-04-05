@@ -75,23 +75,14 @@ public class MobileSecurityObjectGeneratorTest {
 				.verions(MobileDocConstants.MDL_DOC_VERSION)
 				.build();
 
+		// dummy data element in dummy namespace
 		Map<String, List<String>> deviceKeyAuthorizedDataElements = new HashMap<>();
 		deviceKeyAuthorizedDataElements.put("a", List.of("1", "2", "f"));
 		deviceKeyAuthorizedDataElements.put("b", List.of("4", "5", "k"));
 
-
-
 		byte[] encodedMSO = new MobileSecurityObjectGenerator(mso)
-				.addDigestIdsForNamespace("org.iso.18013.5.1", generateISODigest(digestAlgorithm))
-				.addDigestIdsForNamespace("org.iso.18013.5.1.US", generateISOUSDigest(digestAlgorithm))
-				.setDeviceKeyAuthorizedNameSpaces(List.of("abc", "bcd"))
+				.setDeviceKeyAuthorizedNameSpaces(List.of(MobileDocConstants.MDL_NAMESPACE))
 				.setDeviceKeyAuthorizedDataElements(deviceKeyAuthorizedDataElements)
-				.setDeviceKeyInfo(keyInfo)
-				.setValidityInfo(
-						signedTimestamp,
-						validFromTimestamp,
-						validUntilTimestamp,
-						expectedTimestamp)
 				.generate();
 
 		MobileSecurityObjectParser.MobileSecurityObject mso = new MobileSecurityObjectParser()

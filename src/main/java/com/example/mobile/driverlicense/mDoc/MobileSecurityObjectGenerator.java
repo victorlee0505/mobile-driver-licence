@@ -79,8 +79,7 @@ public class MobileSecurityObjectGenerator {
      * @return The <code>MobileSecurityObjectGenerator</code>.
      * @exception IllegalArgumentException if the <code>digestIDs</code> is empty.
      */
-    public MobileSecurityObjectGenerator addDigestIdsForNamespace(@NonNull String nameSpace,
-                                                                  @NonNull Map<Long, byte[]> digestIDs) {
+    private MobileSecurityObjectGenerator addDigestIdsForNamespace(@NonNull String nameSpace, @NonNull Map<Long, byte[]> digestIDs) {
 
         if (digestIDs.isEmpty()) {
             throw new IllegalArgumentException("digestIDs must not be empty");
@@ -175,19 +174,6 @@ public class MobileSecurityObjectGenerator {
     }
 
     /**
-     * Provides extra info for the mdoc authentication public key as part of the
-     * <code>KeyInfo</code> portion of the <code>DeviceKeyInfo</code>.
-     *
-     * @param keyInfo A mapping to represent additional key information.
-     * @return The <code>MobileSecurityObjectGenerator</code>.
-     */
-    public MobileSecurityObjectGenerator setDeviceKeyInfo(@NonNull Map<Long, byte[]> keyInfo) {
-        mKeyInfo.clear();
-        mKeyInfo.putAll(keyInfo);
-        return this;
-    }
-
-    /**
      * Sets the <code>ValidityInfo</code> structure which contains information related to the
      * validity of the MSO and its signature. This must be called before generating since this a
      * required component of the <code>MobileSecurityObject</code>.
@@ -202,7 +188,7 @@ public class MobileSecurityObjectGenerator {
      * @return The <code>MobileSecurityObjectGenerator</code>.
      * @exception IllegalArgumentException if the times are do not meet the constraints.
      */
-    public MobileSecurityObjectGenerator setValidityInfo(@NonNull LocalDateTime signed,
+    private MobileSecurityObjectGenerator setValidityInfo(@NonNull LocalDateTime signed,
             @NonNull LocalDateTime validFrom, @NonNull LocalDateTime validUntil,
             LocalDateTime expectedUpdate) {
 
@@ -226,10 +212,17 @@ public class MobileSecurityObjectGenerator {
         return this;
     }
 
+    private boolean validateMso() {
+        if(this.mso != null) {
+            
+        }
+        return false;
+    }
+
     private CborBuilder generateDeviceKeyBuilder() {
         CborBuilder deviceKeyBuilder = new CborBuilder();
         MapBuilder<CborBuilder> deviceKeyMapBuilder = deviceKeyBuilder.addMap();
-        deviceKeyMapBuilder.put(new UnicodeString("deviceKey"), CborEncoderUtils.cborBuildCoseKey(this.mso.getDeviceKey()));
+        deviceKeyMapBuilder.put(new UnicodeString("deviceKey"), CborEncoderUtils.cborBuildCoseKey(this.mso.getDeviceKeyInfo().getDeviceKey()));
 
         if (!mAuthorizedNameSpaces.isEmpty() | !mAuthorizedDataElements.isEmpty()) {
             MapBuilder<MapBuilder<CborBuilder>> keyAuthMapBuilder = deviceKeyMapBuilder.putMap("keyAuthorizations");
@@ -258,10 +251,10 @@ public class MobileSecurityObjectGenerator {
             keyAuthMapBuilder.end();
         }
 
-        if (!mKeyInfo.isEmpty()) {
+        if (!this.mso.getDeviceKeyInfo().getKeyInfo().isEmpty()) {
             MapBuilder<MapBuilder<CborBuilder>> keyInfoMapBuilder = deviceKeyMapBuilder.putMap("keyInfo");
-            for (Long label : mKeyInfo.keySet()) {
-                keyInfoMapBuilder.put(label, mKeyInfo.get(label));
+            for (Long label : this.mso.getDeviceKeyInfo().getKeyInfo().keySet()) {
+                keyInfoMapBuilder.put(label, this.mso.getDeviceKeyInfo().getKeyInfo().get(label));
             }
             keyInfoMapBuilder.end();
         }
@@ -274,12 +267,12 @@ public class MobileSecurityObjectGenerator {
     private CborBuilder generateValidityInfoBuilder() {
         CborBuilder validityInfoBuilder = new CborBuilder();
         MapBuilder<CborBuilder> validityMapBuilder = validityInfoBuilder.addMap();
-        validityMapBuilder.put(new UnicodeString("signed"), CborEncoderUtils.cborBuildDateTime(mSigned));
-        validityMapBuilder.put(new UnicodeString("validFrom"), CborEncoderUtils.cborBuildDateTime(mValidFrom));
-        validityMapBuilder.put(new UnicodeString("validUntil"), CborEncoderUtils.cborBuildDateTime(mValidUntil));
+        validityMapBuilder.put(new UnicodeString("signed"), CborEncoderUtils.cborBuildDateTime(this.mso.getValidityInfo().getSigned()));
+        validityMapBuilder.put(new UnicodeString("validFrom"), CborEncoderUtils.cborBuildDateTime(this.mso.getValidityInfo().getValidFrom()));
+        validityMapBuilder.put(new UnicodeString("validUntil"), CborEncoderUtils.cborBuildDateTime(this.mso.getValidityInfo().getValidUntil()));
         if (mExpectedUpdate != null) {
             validityMapBuilder.put(new UnicodeString("expectedUpdate"),
-                    CborEncoderUtils.cborBuildDateTime(mExpectedUpdate));
+                    CborEncoderUtils.cborBuildDateTime(this.mso.getValidityInfo().getExpectedUpdate()));
         }
         validityMapBuilder.end();
         return validityInfoBuilder;
