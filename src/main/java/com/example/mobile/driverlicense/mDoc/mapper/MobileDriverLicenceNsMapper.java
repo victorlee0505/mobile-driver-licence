@@ -38,10 +38,11 @@ public class MobileDriverLicenceNsMapper implements NamespaceDataMapperInf<Drive
     @Override
     public Map<String, DataItem> map(@NonNull DriverDetails driverDetails) {
         
-        if(!DriverDetailsValidator.isDriverDetailsValid(driverDetails)){
-            // need to throw
-            return null;
-        }
+        //!FIXME
+        // if(!DriverDetailsValidator.isDriverDetailsValid(driverDetails)){
+        //     // need to throw
+        //     return null;
+        // }
 
         Map<String, DataItem> map = new HashMap<String, DataItem>();
 
@@ -83,7 +84,7 @@ public class MobileDriverLicenceNsMapper implements NamespaceDataMapperInf<Drive
         details.map(DriverDetails::getAdministrativeNumber).ifPresent(value -> map.put(MobileDocConstants.ADMINISTRATIVE_NUMBER, CborHelper.createDataItem(value)));
 
         details.map(DriverDetails::getSex).ifPresent(value -> {
-            if(DriverDetailsValidator.isSexValid(driverDetails)){
+            if(DriverDetailsValidator.isSexValid().apply(driverDetails).isValid()){
                 map.put(MobileDocConstants.SEX, CborHelper.createDataItem(value));
             }
         });

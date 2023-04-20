@@ -8,6 +8,7 @@ import java.security.spec.ECPoint;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.bouncycastle.util.BigIntegers;
 
@@ -119,7 +120,7 @@ public class CborEncoderUtils {
      * Returns full-date = #6.1004(tstr) where tag 1004 is specified in RFC 8943.
      */
     public static DataItem cborBuildDateTime(@NonNull LocalDateTime localDateTime) {
-        String dateString = localDateTime.atZone(null).format(DateTimeFormatter.ISO_DATE_TIME);
+        String dateString = localDateTime.atZone(TimeZone.getTimeZone("UTC").toZoneId()).format(DateTimeFormatter.ISO_DATE_TIME);
         DataItem dataItem = new UnicodeString(dateString);
         dataItem.setTag(1004);
         return dataItem;

@@ -21,8 +21,10 @@ import com.example.mobile.driverlicense.mDoc.validator.DriverDetailsValidator;
 
 import co.nstant.in.cbor.model.DataItem;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class MobileDataBuilderService {
 
     @Autowired
@@ -254,10 +256,10 @@ public class MobileDataBuilderService {
     }
 
     public MobileDataElement createMobileDataElement(@NonNull MobileDataElement mData, @NonNull DriverDetails driverDetails) {
-        if(!DriverDetailsValidator.isDriverDetailsValid(driverDetails)){
-            // need to throw
-            return null;
-        }
+        // if(!DriverDetailsValidator.isDriverDetailsValid(driverDetails)){
+        //     // need to throw
+        //     return null;
+        // }
 
         addAccessControlProfile(mData, createNoAuthProfile());
         addAccessControlProfile(mData, protectedAuthProfile());
@@ -275,6 +277,10 @@ public class MobileDataBuilderService {
 
         // MobileDocConstants.MDL_NAMESPACE = "org.iso.18013.5.1";
         Map<String, DataItem> mDlNsItems = mDLNsMapper.map(driverDetails);
+
+        for (Entry<String, DataItem> item : mDlNsItems.entrySet()) {
+            log.debug("Name: {} - data: {}", item.getKey(), item.getValue().toString());
+        }
 
         for (Entry<String, DataItem> data : mDlNsItems.entrySet()) {
             putEntryDataItem(mData, MobileDocConstants.MDL_NAMESPACE, data.getKey(), idsNoAuth, data.getValue());

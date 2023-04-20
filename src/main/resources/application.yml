@@ -1,10 +1,13 @@
 server:
   port: 7001
 spring:
-  profiles:
-    active: ${mto.spring.profile}
+#   profiles:
+#     active: ${spring.profile}
   application:
     name: mdl
+logging:
+  level:
+    root: DEBUG
 mobile-doc:
   age-in-years: true
   age-birth-year: true

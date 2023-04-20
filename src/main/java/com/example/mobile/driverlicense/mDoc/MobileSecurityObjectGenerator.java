@@ -289,13 +289,12 @@ public class MobileSecurityObjectGenerator {
      * @exception IllegalStateException if required data hasn't been set using the setter
      * methods on this class.
      */
-    @NonNull
     public byte[] generate() throws NoSuchAlgorithmException {
-        if (digestEmpty) {
-            throw new IllegalStateException("Must call addDigestIdsForNamespace before generating");
-        } else if (mSigned == null) {
-            throw new IllegalStateException("Must call setValidityInfo before generating");
-        }
+        // if (digestEmpty) {
+        //     throw new IllegalStateException("Must call addDigestIdsForNamespace before generating");
+        // } else if (mSigned == null) {
+        //     throw new IllegalStateException("Must call setValidityInfo before generating");
+        // }
 
         for (Entry<String, NamespaceData> namespaces : this.mso.getMData().getMNamespaces().entrySet()) {
             addDigestIdsForNamespace(namespaces.getKey(), generateISODigest(this.mso.getDigestAlgorithm(), namespaces.getValue()));

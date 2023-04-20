@@ -260,10 +260,11 @@ public class MobileDataBuilder {
     }
 
     private DrivingPrivileges buildDrivingPrivileges(DriverDetails driverDetails) {
-        if(!DriverDetailsValidator.isDriverDetailsValid(driverDetails)){
-            // need to throw
-            return null;
-        }
+        //!FIXME
+        // if(!DriverDetailsValidator.isDriverDetailsValid(driverDetails)){
+        //     // need to throw
+        //     return null;
+        // }
         DrivingPrivileges drivingPrivileges = new DrivingPrivileges();
 
         //! FIXME dummy obj
@@ -273,10 +274,11 @@ public class MobileDataBuilder {
     }
 
     private MobileDataElement mapper() {
-        if(!DriverDetailsValidator.isDriverDetailsValid(this.driverDetails)){
-            // need to throw
-            return null;
-        }
+        //!FIXME
+        // if(!DriverDetailsValidator.isDriverDetailsValid(this.driverDetails)){
+        //     // need to throw
+        //     return null;
+        // }
 
         addAccessControlProfile(createNoAuthProfile());
         addAccessControlProfile(protectedAuthProfile());
