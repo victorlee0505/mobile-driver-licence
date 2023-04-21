@@ -8,3 +8,7 @@ spring:
 logging:
   level:
     root: DEBUG
+mobile-doc:
+  age-in-years: true
+  age-birth-year: true
+  age-over-nn: 16,19,60
