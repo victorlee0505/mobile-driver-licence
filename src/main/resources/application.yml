@@ -1,0 +1,10 @@
+server:
+  port: 7001
+spring:
+#   profiles:
+#     active: ${spring.profile}
+  application:
+    name: mobile-driver-licence
+logging:
+  level:
+    root: DEBUG
